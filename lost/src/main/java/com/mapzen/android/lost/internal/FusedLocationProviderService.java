@@ -4,6 +4,8 @@ import com.mapzen.android.lost.api.LocationAvailability;
 import com.mapzen.android.lost.api.LocationCallback;
 import com.mapzen.android.lost.api.LocationListener;
 import com.mapzen.android.lost.api.LocationRequest;
+import com.mapzen.android.lost.api.PendingResult;
+import com.mapzen.android.lost.api.Status;
 
 import android.app.PendingIntent;
 import android.app.Service;
@@ -60,41 +62,43 @@ public class FusedLocationProviderService extends Service {
     return serviceImpl.getLocationAvailability();
   }
 
-  public void requestLocationUpdates(LocationRequest request, LocationListener listener) {
-    serviceImpl.requestLocationUpdates(request, listener);
+  public PendingResult<Status> requestLocationUpdates(LocationRequest request,
+      LocationListener listener) {
+    return serviceImpl.requestLocationUpdates(request, listener);
   }
 
-  public void requestLocationUpdates(LocationRequest request, PendingIntent callbackIntent) {
-    serviceImpl.requestLocationUpdates(request, callbackIntent);
+  public PendingResult<Status> requestLocationUpdates(LocationRequest request,
+      PendingIntent callbackIntent) {
+    return serviceImpl.requestLocationUpdates(request, callbackIntent);
   }
 
-  public void requestLocationUpdates(LocationRequest request, LocationCallback callback,
-      Looper looper) {
-    serviceImpl.requestLocationUpdates(request, callback, looper);
+  public PendingResult<Status> requestLocationUpdates(LocationRequest request,
+      LocationCallback callback, Looper looper) {
+    return serviceImpl.requestLocationUpdates(request, callback, looper);
   }
 
-  public void removeLocationUpdates(LocationListener listener) {
-    serviceImpl.removeLocationUpdates(listener);
+  public PendingResult<Status> removeLocationUpdates(LocationListener listener) {
+    return serviceImpl.removeLocationUpdates(listener);
   }
 
-  public void removeLocationUpdates(PendingIntent callbackIntent) {
-    serviceImpl.removeLocationUpdates(callbackIntent);
+  public PendingResult<Status> removeLocationUpdates(PendingIntent callbackIntent) {
+    return serviceImpl.removeLocationUpdates(callbackIntent);
   }
 
-  public void removeLocationUpdates(LocationCallback callback) {
-    serviceImpl.removeLocationUpdates(callback);
+  public PendingResult<Status> removeLocationUpdates(LocationCallback callback) {
+    return serviceImpl.removeLocationUpdates(callback);
   }
 
-  public void setMockMode(boolean isMockMode) {
-    serviceImpl.setMockMode(isMockMode);
+  public PendingResult<Status> setMockMode(boolean isMockMode) {
+    return serviceImpl.setMockMode(isMockMode);
   }
 
-  public void setMockLocation(Location mockLocation) {
-    serviceImpl.setMockLocation(mockLocation);
+  public PendingResult<Status> setMockLocation(Location mockLocation) {
+    return serviceImpl.setMockLocation(mockLocation);
   }
 
-  public void setMockTrace(File file) {
-    serviceImpl.setMockTrace(file);
+  public PendingResult<Status> setMockTrace(File file) {
+    return serviceImpl.setMockTrace(file);
   }
 
   public boolean isProviderEnabled(String provider) {

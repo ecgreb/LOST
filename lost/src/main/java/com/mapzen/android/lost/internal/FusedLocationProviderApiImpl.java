@@ -6,6 +6,8 @@ import com.mapzen.android.lost.api.LocationCallback;
 import com.mapzen.android.lost.api.LocationListener;
 import com.mapzen.android.lost.api.LocationRequest;
 import com.mapzen.android.lost.api.LostApiClient;
+import com.mapzen.android.lost.api.PendingResult;
+import com.mapzen.android.lost.api.Status;
 
 import android.app.PendingIntent;
 import android.content.ComponentName;
@@ -83,47 +85,49 @@ public class FusedLocationProviderApiImpl
     return service.getLocationAvailability();
   }
 
-  @Override public void requestLocationUpdates(LocationRequest request, LocationListener listener) {
-    service.requestLocationUpdates(request, listener);
+  @Override public PendingResult<Status> requestLocationUpdates(LocationRequest request,
+      LocationListener listener) {
+    return service.requestLocationUpdates(request, listener);
   }
 
-  @Override public void requestLocationUpdates(LocationRequest request, LocationListener listener,
-      Looper looper) {
+  @Override public PendingResult<Status> requestLocationUpdates(LocationRequest request,
+      LocationListener listener, Looper looper) {
     throw new RuntimeException("Sorry, not yet implemented");
   }
 
-  @Override public void requestLocationUpdates(LocationRequest request, LocationCallback callback,
-      Looper looper) {
-    service.requestLocationUpdates(request, callback, looper);
+  @Override public PendingResult<Status> requestLocationUpdates(LocationRequest request,
+      LocationCallback callback, Looper looper) {
+    return service.requestLocationUpdates(request, callback, looper);
   }
 
   @Override
-  public void requestLocationUpdates(LocationRequest request, PendingIntent callbackIntent) {
-    service.requestLocationUpdates(request, callbackIntent);
+  public PendingResult<Status> requestLocationUpdates(LocationRequest request,
+      PendingIntent callbackIntent) {
+    return service.requestLocationUpdates(request, callbackIntent);
   }
 
-  @Override public void removeLocationUpdates(LocationListener listener) {
-    service.removeLocationUpdates(listener);
+  @Override public PendingResult<Status> removeLocationUpdates(LocationListener listener) {
+    return service.removeLocationUpdates(listener);
   }
 
-  @Override public void removeLocationUpdates(PendingIntent callbackIntent) {
-    service.removeLocationUpdates(callbackIntent);
+  @Override public PendingResult<Status> removeLocationUpdates(PendingIntent callbackIntent) {
+    return service.removeLocationUpdates(callbackIntent);
   }
 
-  @Override public void removeLocationUpdates(LocationCallback callback) {
-    service.removeLocationUpdates(callback);
+  @Override public PendingResult<Status> removeLocationUpdates(LocationCallback callback) {
+    return service.removeLocationUpdates(callback);
   }
 
-  @Override public void setMockMode(boolean isMockMode) {
-    service.setMockMode(isMockMode);
+  @Override public PendingResult<Status> setMockMode(boolean isMockMode) {
+    return service.setMockMode(isMockMode);
   }
 
-  @Override public void setMockLocation(Location mockLocation) {
-    service.setMockLocation(mockLocation);
+  @Override public PendingResult<Status> setMockLocation(Location mockLocation) {
+    return service.setMockLocation(mockLocation);
   }
 
-  @Override public void setMockTrace(File file) {
-    service.setMockTrace(file);
+  @Override public PendingResult<Status> setMockTrace(File file) {
+    return service.setMockTrace(file);
   }
 
   @Override public boolean isProviderEnabled(String provider) {

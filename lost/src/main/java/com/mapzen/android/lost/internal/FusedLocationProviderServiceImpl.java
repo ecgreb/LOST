@@ -5,6 +5,8 @@ import com.mapzen.android.lost.api.LocationCallback;
 import com.mapzen.android.lost.api.LocationListener;
 import com.mapzen.android.lost.api.LocationRequest;
 import com.mapzen.android.lost.api.LocationResult;
+import com.mapzen.android.lost.api.PendingResult;
+import com.mapzen.android.lost.api.Status;
 
 import android.app.PendingIntent;
 import android.content.Context;
@@ -60,37 +62,45 @@ public class FusedLocationProviderServiceImpl implements LocationEngine.Callback
     return createLocationAvailability();
   }
 
-  public void requestLocationUpdates(LocationRequest request, LocationListener listener) {
+  public PendingResult<Status> requestLocationUpdates(LocationRequest request,
+      LocationListener listener) {
     listenerToRequest.put(listener, request);
     locationEngine.setRequest(request);
+    return new FusedLocationPendingResult();
   }
 
-  public void requestLocationUpdates(LocationRequest request, PendingIntent callbackIntent) {
+  public PendingResult<Status> requestLocationUpdates(LocationRequest request,
+      PendingIntent callbackIntent) {
     intentToRequest.put(callbackIntent, request);
     locationEngine.setRequest(request);
+    return new FusedLocationPendingResult();
   }
 
-  public void requestLocationUpdates(LocationRequest request, LocationCallback callback,
-      Looper looper) {
+  public PendingResult<Status> requestLocationUpdates(LocationRequest request,
+      LocationCallback callback, Looper looper) {
     callbackToRequest.put(callback, request);
     callbackToLooper.put(callback, looper);
     locationEngine.setRequest(request);
+    return new FusedLocationPendingResult();
   }
 
-  public void removeLocationUpdates(LocationListener listener) {
+  public PendingResult<Status> removeLocationUpdates(LocationListener listener) {
     listenerToRequest.remove(listener);
     checkAllListenersPendingIntentsAndCallbacks();
+    return new FusedLocationPendingResult();
   }
 
-  public void removeLocationUpdates(PendingIntent callbackIntent) {
+  public PendingResult<Status> removeLocationUpdates(PendingIntent callbackIntent) {
     intentToRequest.remove(callbackIntent);
     checkAllListenersPendingIntentsAndCallbacks();
+    return new FusedLocationPendingResult();
   }
 
-  public void removeLocationUpdates(LocationCallback callback) {
+  public PendingResult<Status> removeLocationUpdates(LocationCallback callback) {
     callbackToRequest.remove(callback);
     callbackToLooper.remove(callback);
     checkAllListenersPendingIntentsAndCallbacks();
+    return new FusedLocationPendingResult();
   }
 
   /**
@@ -103,10 +113,11 @@ public class FusedLocationProviderServiceImpl implements LocationEngine.Callback
     }
   }
 
-  public void setMockMode(boolean isMockMode) {
+  public PendingResult<Status> setMockMode(boolean isMockMode) {
     if (mockMode != isMockMode) {
       toggleMockMode();
     }
+    return new FusedLocationPendingResult();
   }
 
   private void toggleMockMode() {
@@ -119,16 +130,18 @@ public class FusedLocationProviderServiceImpl implements LocationEngine.Callback
     }
   }
 
-  public void setMockLocation(Location mockLocation) {
+  public PendingResult<Status> setMockLocation(Location mockLocation) {
     if (mockMode) {
       ((MockEngine) locationEngine).setLocation(mockLocation);
     }
+    return new FusedLocationPendingResult();
   }
 
-  public void setMockTrace(File file) {
+  public PendingResult<Status> setMockTrace(File file) {
     if (mockMode) {
       ((MockEngine) locationEngine).setTrace(file);
     }
+    return new FusedLocationPendingResult();
   }
 
   public boolean isProviderEnabled(String provider) {

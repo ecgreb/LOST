@@ -25,28 +25,31 @@ public interface FusedLocationProviderApi {
   LocationAvailability getLocationAvailability();
 
   @RequiresPermission(anyOf = {ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION})
-  void requestLocationUpdates(LocationRequest request, LocationListener listener);
+  PendingResult<Status> requestLocationUpdates(LocationRequest request, LocationListener listener);
 
   @RequiresPermission(anyOf = {ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION})
-  void requestLocationUpdates(LocationRequest request, LocationListener listener, Looper looper);
+  PendingResult<Status> requestLocationUpdates(LocationRequest request, LocationListener listener,
+      Looper looper);
 
   @RequiresPermission(anyOf = {ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION})
-  void requestLocationUpdates(LocationRequest request, LocationCallback callback, Looper looper);
+  PendingResult<Status> requestLocationUpdates(LocationRequest request, LocationCallback callback,
+      Looper looper);
 
   @RequiresPermission(anyOf = {ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION})
-  void requestLocationUpdates(LocationRequest request, PendingIntent callbackIntent);
+  PendingResult<Status> requestLocationUpdates(LocationRequest request,
+      PendingIntent callbackIntent);
 
-  void removeLocationUpdates(LocationListener listener);
+  PendingResult<Status> removeLocationUpdates(LocationListener listener);
 
-  void removeLocationUpdates(PendingIntent callbackIntent);
+  PendingResult<Status> removeLocationUpdates(PendingIntent callbackIntent);
 
-  void removeLocationUpdates(LocationCallback callback);
+  PendingResult<Status> removeLocationUpdates(LocationCallback callback);
 
-  void setMockMode(boolean isMockMode);
+  PendingResult<Status> setMockMode(boolean isMockMode);
 
-  void setMockLocation(Location mockLocation);
+  PendingResult<Status> setMockLocation(Location mockLocation);
 
-  void setMockTrace(final File file);
+  PendingResult<Status> setMockTrace(final File file);
 
   /**
    * @deprecated Use {@link SettingsApi#checkLocationSettings(LostApiClient,
