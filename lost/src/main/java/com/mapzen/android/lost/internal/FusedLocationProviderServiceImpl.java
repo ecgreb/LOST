@@ -66,14 +66,14 @@ public class FusedLocationProviderServiceImpl implements LocationEngine.Callback
       LocationListener listener) {
     listenerToRequest.put(listener, request);
     locationEngine.setRequest(request);
-    return new FusedLocationPendingResult();
+    return new FusedLocationPendingResult(true);
   }
 
   public PendingResult<Status> requestLocationUpdates(LocationRequest request,
       PendingIntent callbackIntent) {
     intentToRequest.put(callbackIntent, request);
     locationEngine.setRequest(request);
-    return new FusedLocationPendingResult();
+    return new FusedLocationPendingResult(true);
   }
 
   public PendingResult<Status> requestLocationUpdates(LocationRequest request,
@@ -81,26 +81,29 @@ public class FusedLocationProviderServiceImpl implements LocationEngine.Callback
     callbackToRequest.put(callback, request);
     callbackToLooper.put(callback, looper);
     locationEngine.setRequest(request);
-    return new FusedLocationPendingResult();
+    return new FusedLocationPendingResult(true);
   }
 
   public PendingResult<Status> removeLocationUpdates(LocationListener listener) {
+    boolean hasResult = listenerToRequest.containsKey(listener);
     listenerToRequest.remove(listener);
     checkAllListenersPendingIntentsAndCallbacks();
-    return new FusedLocationPendingResult();
+    return new FusedLocationPendingResult(hasResult);
   }
 
   public PendingResult<Status> removeLocationUpdates(PendingIntent callbackIntent) {
+    boolean hasResult = intentToRequest.containsKey(callbackIntent);
     intentToRequest.remove(callbackIntent);
     checkAllListenersPendingIntentsAndCallbacks();
-    return new FusedLocationPendingResult();
+    return new FusedLocationPendingResult(hasResult);
   }
 
   public PendingResult<Status> removeLocationUpdates(LocationCallback callback) {
+    boolean hasResult = callbackToRequest.containsKey(callback);
     callbackToRequest.remove(callback);
     callbackToLooper.remove(callback);
     checkAllListenersPendingIntentsAndCallbacks();
-    return new FusedLocationPendingResult();
+    return new FusedLocationPendingResult(hasResult);
   }
 
   /**
@@ -117,7 +120,7 @@ public class FusedLocationProviderServiceImpl implements LocationEngine.Callback
     if (mockMode != isMockMode) {
       toggleMockMode();
     }
-    return new FusedLocationPendingResult();
+    return new FusedLocationPendingResult(true);
   }
 
   private void toggleMockMode() {
@@ -134,14 +137,14 @@ public class FusedLocationProviderServiceImpl implements LocationEngine.Callback
     if (mockMode) {
       ((MockEngine) locationEngine).setLocation(mockLocation);
     }
-    return new FusedLocationPendingResult();
+    return new FusedLocationPendingResult(true);
   }
 
   public PendingResult<Status> setMockTrace(File file) {
     if (mockMode) {
       ((MockEngine) locationEngine).setTrace(file);
     }
-    return new FusedLocationPendingResult();
+    return new FusedLocationPendingResult(true);
   }
 
   public boolean isProviderEnabled(String provider) {
