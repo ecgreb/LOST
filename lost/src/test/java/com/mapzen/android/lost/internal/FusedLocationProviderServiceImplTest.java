@@ -1,11 +1,14 @@
 package com.mapzen.android.lost.internal;
 
 import com.mapzen.android.lost.api.LocationAvailability;
+import com.mapzen.android.lost.api.LocationCallback;
 import com.mapzen.android.lost.api.LocationListener;
 import com.mapzen.android.lost.api.LocationRequest;
 import com.mapzen.android.lost.api.LocationResult;
 import com.mapzen.android.lost.api.LocationServices;
 import com.mapzen.android.lost.api.LostApiClient;
+import com.mapzen.android.lost.api.PendingResult;
+import com.mapzen.android.lost.api.Status;
 import com.mapzen.lost.BuildConfig;
 
 import com.google.common.base.Charsets;
@@ -37,6 +40,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static android.content.Context.LOCATION_SERVICE;
 import static android.location.LocationManager.GPS_PROVIDER;
@@ -663,6 +667,188 @@ public class FusedLocationProviderServiceImplTest {
     api.shutdown();
     assertThat(api.getPendingIntents()).isEmpty();
     client.disconnect();
+  }
+
+  @Test public void requestLocationUpdates_listener_shouldReturnFusedLocationPendingResult() {
+    TestLocationListener listener = new TestLocationListener();
+    PendingResult<Status> result = api.requestLocationUpdates(LocationRequest.create(), listener);
+    assertThat(result.await().getStatus().getStatusCode()).isEqualTo(Status.SUCCESS);
+    assertThat(result.await(1000, TimeUnit.MILLISECONDS).getStatus().getStatusCode()).isEqualTo(
+        Status.SUCCESS);
+    assertThat(result.isCanceled()).isFalse();
+    TestResultCallback callback = new TestResultCallback();
+    result.setResultCallback(callback);
+    assertThat(callback.getStatus().getStatusCode()).isEqualTo(Status.SUCCESS);
+    TestResultCallback otherCallback = new TestResultCallback();
+    result.setResultCallback(otherCallback, 1000, TimeUnit.MILLISECONDS);
+    assertThat(otherCallback.getStatus().getStatusCode()).isEqualTo(Status.SUCCESS);
+  }
+
+  @Test public void requestLocationUpdates_pendingIntent_shouldReturnFusedLocationPendingResult() {
+    PendingIntent pendingIntent = mock(PendingIntent.class);
+    PendingResult<Status> result = api.requestLocationUpdates(LocationRequest.create(),
+        pendingIntent);
+    assertThat(result.await().getStatus().getStatusCode()).isEqualTo(Status.SUCCESS);
+    assertThat(result.await(1000, TimeUnit.MILLISECONDS).getStatus().getStatusCode()).isEqualTo(
+        Status.SUCCESS);
+    assertThat(result.isCanceled()).isFalse();
+    TestResultCallback callback = new TestResultCallback();
+    result.setResultCallback(callback);
+    assertThat(callback.getStatus().getStatusCode()).isEqualTo(Status.SUCCESS);
+    TestResultCallback otherCallback = new TestResultCallback();
+    result.setResultCallback(otherCallback, 1000, TimeUnit.MILLISECONDS);
+    assertThat(otherCallback.getStatus().getStatusCode()).isEqualTo(Status.SUCCESS);
+  }
+
+  @Test public void requestLocationUpdates_callback_shouldReturnFusedLocationPendingResult() {
+    LocationCallback locationCallback = new TestLocationCallback();
+    PendingResult<Status> result = api.requestLocationUpdates(LocationRequest.create(),
+        locationCallback, Looper.myLooper());
+    assertThat(result.await().getStatus().getStatusCode()).isEqualTo(Status.SUCCESS);
+    assertThat(result.await(1000, TimeUnit.MILLISECONDS).getStatus().getStatusCode()).isEqualTo(
+        Status.SUCCESS);
+    assertThat(result.isCanceled()).isFalse();
+    TestResultCallback callback = new TestResultCallback();
+    result.setResultCallback(callback);
+    assertThat(callback.getStatus().getStatusCode()).isEqualTo(Status.SUCCESS);
+    TestResultCallback otherCallback = new TestResultCallback();
+    result.setResultCallback(otherCallback, 1000, TimeUnit.MILLISECONDS);
+    assertThat(otherCallback.getStatus().getStatusCode()).isEqualTo(Status.SUCCESS);
+  }
+
+  @Test public void removeLocationUpdates_listener_shouldReturnFusedLocationPendingResult() {
+    TestLocationListener listener = new TestLocationListener();
+    api.requestLocationUpdates(LocationRequest.create(), listener);
+    PendingResult<Status> result = api.removeLocationUpdates(listener);
+    assertThat(result.await().getStatus().getStatusCode()).isEqualTo(Status.SUCCESS);
+    assertThat(result.await(1000, TimeUnit.MILLISECONDS).getStatus().getStatusCode()).isEqualTo(
+        Status.SUCCESS);
+    assertThat(result.isCanceled()).isFalse();
+    TestResultCallback callback = new TestResultCallback();
+    result.setResultCallback(callback);
+    assertThat(callback.getStatus().getStatusCode()).isEqualTo(Status.SUCCESS);
+    TestResultCallback otherCallback = new TestResultCallback();
+    result.setResultCallback(otherCallback, 1000, TimeUnit.MILLISECONDS);
+    assertThat(otherCallback.getStatus().getStatusCode()).isEqualTo(Status.SUCCESS);
+  }
+
+  @Test public void removeLocationUpdates_pendingIntent_shouldReturnFusedLocationPendingResult() {
+    PendingIntent pendingIntent = mock(PendingIntent.class);
+    api.requestLocationUpdates(LocationRequest.create(), pendingIntent);
+    PendingResult<Status> result = api.removeLocationUpdates(pendingIntent);
+    assertThat(result.await().getStatus().getStatusCode()).isEqualTo(Status.SUCCESS);
+    assertThat(result.await(1000, TimeUnit.MILLISECONDS).getStatus().getStatusCode()).isEqualTo(
+        Status.SUCCESS);
+    assertThat(result.isCanceled()).isFalse();
+    TestResultCallback callback = new TestResultCallback();
+    result.setResultCallback(callback);
+    assertThat(callback.getStatus().getStatusCode()).isEqualTo(Status.SUCCESS);
+    TestResultCallback otherCallback = new TestResultCallback();
+    result.setResultCallback(otherCallback, 1000, TimeUnit.MILLISECONDS);
+    assertThat(otherCallback.getStatus().getStatusCode()).isEqualTo(Status.SUCCESS);
+  }
+
+  @Test public void removeLocationUpdates_callback_shouldReturnFusedLocationPendingResult() {
+    LocationCallback locationCallback = new TestLocationCallback();
+    api.requestLocationUpdates(LocationRequest.create(), locationCallback, Looper.myLooper());
+    PendingResult<Status> result = api.removeLocationUpdates(locationCallback);
+    assertThat(result.await().getStatus().getStatusCode()).isEqualTo(Status.SUCCESS);
+    assertThat(result.await(1000, TimeUnit.MILLISECONDS).getStatus().getStatusCode()).isEqualTo(
+        Status.SUCCESS);
+    assertThat(result.isCanceled()).isFalse();
+    TestResultCallback callback = new TestResultCallback();
+    result.setResultCallback(callback);
+    assertThat(callback.getStatus().getStatusCode()).isEqualTo(Status.SUCCESS);
+    TestResultCallback otherCallback = new TestResultCallback();
+    result.setResultCallback(otherCallback, 1000, TimeUnit.MILLISECONDS);
+    assertThat(otherCallback.getStatus().getStatusCode()).isEqualTo(Status.SUCCESS);
+  }
+
+  @Test public void removeNoLocationUpdates_listener_shouldReturnFusedLocationPendingResult() {
+    TestLocationListener listener = new TestLocationListener();
+    PendingResult<Status> result = api.removeLocationUpdates(listener);
+    assertThat(result.await().getStatus().getStatusCode()).isEqualTo(Status.SUCCESS);
+    assertThat(result.await(1000, TimeUnit.MILLISECONDS).getStatus().getStatusCode()).isEqualTo(
+        Status.SUCCESS);
+    assertThat(result.isCanceled()).isFalse();
+    TestResultCallback callback = new TestResultCallback();
+    result.setResultCallback(callback);
+    assertThat(callback.getStatus()).isNull();
+    TestResultCallback otherCallback = new TestResultCallback();
+    result.setResultCallback(otherCallback, 1000, TimeUnit.MILLISECONDS);
+    assertThat(otherCallback.getStatus()).isNull();
+  }
+
+  @Test public void removeNoLocationUpdates_pendingIntent_shouldReturnFusedLocationPendingResult() {
+    PendingIntent pendingIntent = mock(PendingIntent.class);
+    PendingResult<Status> result = api.removeLocationUpdates(pendingIntent);
+    assertThat(result.await().getStatus().getStatusCode()).isEqualTo(Status.SUCCESS);
+    assertThat(result.await(1000, TimeUnit.MILLISECONDS).getStatus().getStatusCode()).isEqualTo(
+        Status.SUCCESS);
+    assertThat(result.isCanceled()).isFalse();
+    TestResultCallback callback = new TestResultCallback();
+    result.setResultCallback(callback);
+    assertThat(callback.getStatus()).isNull();
+    TestResultCallback otherCallback = new TestResultCallback();
+    result.setResultCallback(otherCallback, 1000, TimeUnit.MILLISECONDS);
+    assertThat(otherCallback.getStatus()).isNull();
+  }
+
+  @Test public void removeNoLocationUpdates_callback_shouldReturnFusedLocationPendingResult() {
+    LocationCallback locationCallback = new TestLocationCallback();
+    PendingResult<Status> result = api.removeLocationUpdates(locationCallback);
+    assertThat(result.await().getStatus().getStatusCode()).isEqualTo(Status.SUCCESS);
+    assertThat(result.await(1000, TimeUnit.MILLISECONDS).getStatus().getStatusCode()).isEqualTo(
+        Status.SUCCESS);
+    assertThat(result.isCanceled()).isFalse();
+    TestResultCallback callback = new TestResultCallback();
+    result.setResultCallback(callback);
+    assertThat(callback.getStatus()).isNull();
+    TestResultCallback otherCallback = new TestResultCallback();
+    result.setResultCallback(otherCallback, 1000, TimeUnit.MILLISECONDS);
+    assertThat(otherCallback.getStatus()).isNull();
+  }
+
+  @Test public void setMockMode_shouldReturnFusedLocationPendingResult() {
+    PendingResult<Status> result = api.setMockMode(true);
+    assertThat(result.await().getStatus().getStatusCode()).isEqualTo(Status.SUCCESS);
+    assertThat(result.await(1000, TimeUnit.MILLISECONDS).getStatus().getStatusCode()).isEqualTo(
+        Status.SUCCESS);
+    assertThat(result.isCanceled()).isFalse();
+    TestResultCallback callback = new TestResultCallback();
+    result.setResultCallback(callback);
+    assertThat(callback.getStatus().getStatusCode()).isEqualTo(Status.SUCCESS);
+    TestResultCallback otherCallback = new TestResultCallback();
+    result.setResultCallback(otherCallback, 1000, TimeUnit.MILLISECONDS);
+    assertThat(otherCallback.getStatus().getStatusCode()).isEqualTo(Status.SUCCESS);
+  }
+
+  @Test public void setMockLocation_shouldReturnFusedLocationPendingResult() {
+    PendingResult<Status> result = api.setMockLocation(new Location("test"));
+    assertThat(result.await().getStatus().getStatusCode()).isEqualTo(Status.SUCCESS);
+    assertThat(result.await(1000, TimeUnit.MILLISECONDS).getStatus().getStatusCode()).isEqualTo(
+        Status.SUCCESS);
+    assertThat(result.isCanceled()).isFalse();
+    TestResultCallback callback = new TestResultCallback();
+    result.setResultCallback(callback);
+    assertThat(callback.getStatus().getStatusCode()).isEqualTo(Status.SUCCESS);
+    TestResultCallback otherCallback = new TestResultCallback();
+    result.setResultCallback(otherCallback, 1000, TimeUnit.MILLISECONDS);
+    assertThat(otherCallback.getStatus().getStatusCode()).isEqualTo(Status.SUCCESS);
+  }
+
+  @Test public void setMockTrace_shouldReturnFusedLocationPendingResult() {
+    PendingResult<Status> result = api.setMockTrace(new File("test"));
+    assertThat(result.await().getStatus().getStatusCode()).isEqualTo(Status.SUCCESS);
+    assertThat(result.await(1000, TimeUnit.MILLISECONDS).getStatus().getStatusCode()).isEqualTo(
+        Status.SUCCESS);
+    assertThat(result.isCanceled()).isFalse();
+    TestResultCallback callback = new TestResultCallback();
+    result.setResultCallback(callback);
+    assertThat(callback.getStatus().getStatusCode()).isEqualTo(Status.SUCCESS);
+    TestResultCallback otherCallback = new TestResultCallback();
+    result.setResultCallback(otherCallback, 1000, TimeUnit.MILLISECONDS);
+    assertThat(otherCallback.getStatus().getStatusCode()).isEqualTo(Status.SUCCESS);
   }
 
   /**
